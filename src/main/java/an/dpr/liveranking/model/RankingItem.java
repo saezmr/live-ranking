@@ -1,0 +1,24 @@
+package an.dpr.liveranking.model;
+
+import java.time.Instant;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class RankingItem {
+
+    private Integer dorsal;
+    private Integer lap;
+    private Integer position;
+    private Integer diffPosition;
+    private Instant instant;
+    private Instant diffFirst;
+    private Integer lapsLost;
+    private Instant lapTime;
+}
