@@ -16,11 +16,22 @@ import io.smallrye.mutiny.Multi;
 @ApplicationScoped
 public class LapsProducer {
 
-    @Outgoing("generated-lap")
+
+
+    private static final Long RACE_CODE = 1L;
+
+	@Outgoing("generated-lap")
     public Multi<Lap> generateLaps() {
         return Multi.createFrom().ticks().every(Duration.ofSeconds(1))
-        .onItem().apply(n->
-            Lap.builder().instant(Instant.now()).dorsal(LapsProducer.randomDorsal()).build());
+        .onItem().apply(n-> generateLap());
+    }
+
+    private Lap generateLap() {
+        return Lap.builder()
+        .instant(Instant.now())
+        .dorsal(LapsProducer.randomDorsal())
+        .race(RACE_CODE)
+        .build();
     }
     
     private static Integer randomDorsal() {

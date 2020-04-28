@@ -15,5 +15,6 @@ public class Lap {
 
     private Integer dorsal;
     private Instant instant;
+    private Long race;
 
 }

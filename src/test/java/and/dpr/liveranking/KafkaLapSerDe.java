@@ -17,7 +17,7 @@ public class KafkaLapSerDe {
     public void shouldSerialize() {
         LapSerializer serializer = new LapSerializer();
         LapDeserializer deserializer = new LapDeserializer();
-        Lap lap = Lap.builder().dorsal(1).instant(Instant.now()).build();
+        Lap lap = Lap.builder().dorsal(1).instant(Instant.now()).race(2L).build();
         byte[] serialized = serializer.serialize("lap", lap);
         Lap lapDeserialized = deserializer.deserialize("lap", serialized);
         assertEquals(lap, lapDeserialized, "Lap is not equals, SerDe doesnt run properly");
