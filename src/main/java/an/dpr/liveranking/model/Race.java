@@ -26,8 +26,9 @@ public class Race {
 
 	public Ranking generateRanking(Lap lap) {
         if (rankings == null) rankings = new Ranking[totalLaps];
-        rankings[++currentLap -1] = Ranking.builder().rankingLap(currentLap).lapTime(lap.getInstant())
-        .lapsRemaining(this.getTotalLaps()-currentLap).finished(false).build();
+        if (currentLap == null) currentLap = 0;
+        rankings[++currentLap -1] = Ranking.builder().currentLap(currentLap).lapTime(lap.getInstant())
+        .lapsRemaining(this.getTotalLaps()-currentLap).build();
         return rankings[currentLap-1];
     } 
 

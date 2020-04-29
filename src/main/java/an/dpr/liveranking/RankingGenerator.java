@@ -11,11 +11,15 @@ import org.eclipse.microprofile.reactive.messaging.Outgoing;
 import an.dpr.liveranking.model.Lap;
 import an.dpr.liveranking.model.Race;
 import an.dpr.liveranking.model.Ranking;
+import an.dpr.liveranking.model.RankingItem;
 import io.smallrye.reactive.messaging.annotations.Broadcast;
+import lombok.Getter;
+import lombok.Setter;
 
 @ApplicationScoped
 public class RankingGenerator {
-
+    @Setter
+    @Getter
     private Race race; // FIXME it should be a list of races to allow multirace in same service
 
     @Incoming("laps")
@@ -29,13 +33,26 @@ public class RankingGenerator {
             ranking.addLap(lap);
         } else {
             Ranking ranking = race.getCurrentRanking();
-            ranking.addLap(lap);
+            // TODO have to validate if rider lost lap to update this field
+            boolean lostLap = false;
+            int lostLaps = 0;
+            if (race.getCurrentLap() > 1) {
+                RankingItem item;
+                int index = race.getCurrentLap()-2;
+                do {
+                    Ranking r2 = race.getRankings()[index--];
+                    item = r2.getItems().get(lap.getDorsal());
+                    if (item == null) lostLaps++;
+                    else lostLaps+=item.getLostLaps();
+                }
+                while(item == null && index >= 0);
+            } 
+            // TODO also we have to calculate the position, based on lap lost or not
+            ranking.addLap(lap, lostLaps);
         }
         
         return race;
     }
-
-
 
 	private Race getRace(Long raceCode) {
         if (race == null) {

@@ -19,6 +19,6 @@ public class RankingItem {
     private Integer diffPosition;
     private Instant instant;
     private Long diffFirst;
-    private Integer lapsLost;
+    private Integer lostLaps;
     private Instant lapTime;
 }
