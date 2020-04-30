@@ -25,10 +25,18 @@ public class Race {
     private Ranking[] rankings;
 
 	public Ranking generateRanking(Lap lap) {
+        Ranking lastRanking = null;
         if (rankings == null) rankings = new Ranking[totalLaps];
-        if (currentLap == null) currentLap = 0;
-        rankings[++currentLap -1] = Ranking.builder().currentLap(currentLap).lapTime(lap.getInstant())
-        .lapsRemaining(this.getTotalLaps()-currentLap).build();
+        if (currentLap == null) {
+            currentLap = 0;
+        } else {
+            lastRanking = rankings[currentLap-1];
+        }
+        rankings[++currentLap -1] = Ranking.builder()
+        .currentLap(currentLap)
+        .lapTime(lap.getInstant())
+        .lapsRemaining(this.getTotalLaps()-currentLap)
+        .lastRanking(lastRanking).build();
         return rankings[currentLap-1];
     } 
 

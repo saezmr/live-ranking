@@ -33,8 +33,6 @@ public class RankingGenerator {
             ranking.addLap(lap);
         } else {
             Ranking ranking = race.getCurrentRanking();
-            // TODO have to validate if rider lost lap to update this field
-            boolean lostLap = false;
             int lostLaps = 0;
             if (race.getCurrentLap() > 1) {
                 RankingItem item;

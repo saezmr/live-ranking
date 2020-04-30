@@ -91,7 +91,7 @@ public class RankingGeneratorTest {
     }
     
     @Test
-    public void should_has_position_ok_first_lap() {
+    public void should_has_position_ok() {
         Race race = Race.builder().code(RACE_CODE).totalLaps(4).build();
         generator.setRace(race);
         Integer[] laps = {6,5,4,3,2,1, 1,2,3,4,5,6, 1,2,3,4, 3,2,6,1,4,5};
@@ -108,9 +108,59 @@ public class RankingGeneratorTest {
         //TODO we are assert first of the lostlap riders, but would be better the actual position
         assertEquals(1, race.getRankings()[3].getItems().get(6).getPosition());
         assertEquals(2, race.getRankings()[3].getItems().get(5).getPosition());
-
+    }
+    
+    @Test
+    public void should_view_diff_with_first() {
+        Race race = Race.builder().code(RACE_CODE).totalLaps(4).build();
+        generator.setRace(race);
+        Integer[] laps = {6,5,4,3};
+        Arrays.stream(laps).forEach(d -> {
+            try {Thread.sleep(100);} catch (Exception e) {}
+            generator.addLap(generateLap(d));
+        });
+        race = generator.getRace();
+        assertEquals(0, race.getRankings()[0].getItems().get(6).getDiffFirst());
+        assert(race.getRankings()[0].getItems().get(5).getDiffFirst()>=100);
+        assert(race.getRankings()[0].getItems().get(4).getDiffFirst()>=200);
+        assert(race.getRankings()[0].getItems().get(3).getDiffFirst()>=300);
+        
+    }
+    
+    @Test
+    public void should_view_diff_position_last_lap() {
+        Race race = Race.builder().code(RACE_CODE).totalLaps(4).build();
+        generator.setRace(race);
+        Integer[] laps = {1,2,3,4, 4,3,2,1,5};
+        Arrays.stream(laps).forEach(d -> {
+            try {Thread.sleep(100);} catch (Exception e) {}
+            generator.addLap(generateLap(d));
+        });
+        assertEquals(-3, race.getRankings()[1].getItems().get(1).getDiffPosition(), "should lost 3 positions");
+        assertEquals(-1, race.getRankings()[1].getItems().get(2).getDiffPosition(), "should be in the same position");
+        assertEquals(1, race.getRankings()[1].getItems().get(3).getDiffPosition(), "should gain 1 position");
+        assertEquals(3, race.getRankings()[1].getItems().get(4).getDiffPosition(), "should gain 3 positions");
+        assertEquals(0, race.getRankings()[1].getItems().get(5).getDiffPosition(), "lostlap, should no changes");
     }
 
-    //desdoblarse
+    @Test
+    public void should_recover_lap() {
+        assert(false);
+    }
+
+    @Test
+    public void should_view_diff_between_riders_with_lost_laps() {
+        assert(false);
+    }
+
+    @Test
+    public void should_view_lap_time() {
+        assert(false);
+    }
+
+    @Test
+    public void should_view_lap_time_with_lost_laps() {
+        assert(false);
+    }
 
 }

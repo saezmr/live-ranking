@@ -22,6 +22,7 @@ public class Ranking {
     private Integer lapsRemaining;
     private Map<Integer, RankingItem> items;
     private int[] $nextPosition;//exclude from lombok
+    private Ranking lastRanking;
 
 	public void addLap(Lap lap) {
         addLap(lap, 0);
@@ -32,18 +33,31 @@ public class Ranking {
         if (firstLap()) {
             items = new HashMap<Integer, RankingItem>();
         }
+        Integer position = calculatePosition(lostLaps);
         item = RankingItem.builder().dorsal(lap.getDorsal())
         .instant(lap.getInstant()).lap(currentLap)
-        .position(calculatePosition(lostLaps))
+        .position(position)
         .diffFirst(calculateDiffFirst(lap))
         .lostLaps(lostLaps)
-        .diffPosition(null) // TODO
+        .diffPosition(calculatePositionChanges(lap.getDorsal(), position, lostLaps))
         .lapTime(null) // TODO
         .build();
         items.put(lap.getDorsal(), item);
     }
     
     /**
+     * With lostLap riders is not possible to calculate position changes.
+     * @param dorsal
+     * @param position
+     * @return
+     */
+    private Integer calculatePositionChanges(Integer dorsal, Integer position, Integer lostLaps) {
+        if (lastRanking == null || lostLaps > 0) return 0;
+        RankingItem item = lastRanking.getItems().get(dorsal);
+        return item != null ? item.getPosition() - position : null;
+	}
+
+	/**
      * To take in account:
      *  - first no lost laps riders
      *  - then 1 lost laps riders
@@ -52,6 +66,8 @@ public class Ranking {
      * 
      * We need to recalculate (instant) or maintain status 
      * (currentlap_next_position, lostlap1_next_position etc...)
+     * TODO refactor: with last lap riders is not possible to know the position until the
+     * finish of the lap, since we don't know new lost lap riders, adbandons etc...
      * @param lostLaps
      * @return
      */
