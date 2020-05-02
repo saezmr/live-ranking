@@ -27,12 +27,13 @@ public class Race {
 	public Ranking generateRanking(Lap lap) {
         Ranking lastRanking = null;
         if (rankings == null) rankings = new Ranking[totalLaps];
-        if (currentLap == null) {
-            currentLap = 0;
+        if (currentLap == null || currentLap.equals(0)) {
+            currentLap = 1;
         } else {
             lastRanking = rankings[currentLap-1];
+            currentLap++;
         }
-        rankings[++currentLap -1] = Ranking.builder()
+        rankings[currentLap -1] = Ranking.builder()
         .currentLap(currentLap)
         .lapTime(lap.getInstant())
         .lapsRemaining(this.getTotalLaps()-currentLap)
@@ -45,8 +46,9 @@ public class Race {
             rankings.length == 0 || 
             Optional.ofNullable(getCurrentRanking()).stream()
             .map(r -> r.getItems())
-            .filter(item -> item != null)
-            .anyMatch(item -> item.get(lap.getDorsal())!=null);
+            .filter(items -> items != null)
+            .map(items -> items.get(lap.getDorsal()))
+            .anyMatch(item -> item!=null && item.getLostLaps().equals(0));
 	}
 
 	public Ranking getCurrentRanking() {

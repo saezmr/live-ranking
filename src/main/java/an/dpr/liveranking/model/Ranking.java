@@ -96,4 +96,26 @@ public class Ranking {
 	private boolean firstLap() {
         return items == null;
     }
+
+	private boolean isRecoverLap(Integer dorsal) {
+        RankingItem item = items.get(dorsal);
+        if (item != null && item.getLostLaps() > 0) {
+            return true;
+        } else {
+            return false;
+        }
+	}
+    
+	public boolean recoverLap(Lap lap) {
+        if (!isRecoverLap(lap.getDorsal())) return false;
+        RankingItem item = items.get(lap.getDorsal());
+        item.setLostLaps(item.getLostLaps()-1);
+        Integer position = calculatePosition(item.getLostLaps());
+        item.setInstant(lap.getInstant());
+        item.setPosition(position);
+        item.setDiffFirst(calculateDiffFirst(lap));
+        item.setDiffPosition(calculatePositionChanges(lap.getDorsal(), position, item.getLostLaps()));
+        item.setLapTime(null);
+        return true;
+    }
 }
